@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { QueryProvider } from "@/app/providers/QueryProvider";
 
 function NotFoundComponent() {
   return (
@@ -117,8 +118,8 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryProvider client={queryClient}>
       <Outlet />
-    </QueryClientProvider>
+    </QueryProvider>
   );
 }
