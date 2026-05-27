@@ -1,8 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ShoppingBag, Menu, X, Sparkles } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useCart } from "@/lib/cart-store";
 
 const links = [
   { to: "/", label: "Home" },
@@ -14,7 +13,6 @@ const links = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const { count } = useCart();
   const { location } = useRouterState();
 
   return (
@@ -56,19 +54,6 @@ export default function Nav() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Link
-              to="/cart"
-              className="relative grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white transition hover:bg-[#f5a623] hover:text-[#211c1a]"
-              aria-label="Cart"
-            >
-              <ShoppingBag className="h-4 w-4" />
-              {count > 0 && (
-                <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-[#f5a623] text-[10px] font-semibold text-[#211c1a]">
-                  {count}
-                </span>
-              )}
-            </Link>
-
             <button
               className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white md:hidden"
               onClick={() => setOpen(true)}

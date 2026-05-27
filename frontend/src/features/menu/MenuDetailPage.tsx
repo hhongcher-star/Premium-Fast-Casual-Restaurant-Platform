@@ -1,5 +1,17 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Star, Clock, Flame, ChevronLeft, Heart, Plus, Minus } from "lucide-react";
+import {
+  Star,
+  Clock,
+  Flame,
+  ChevronLeft,
+  Heart,
+  Plus,
+  Minus,
+  ShieldCheck,
+  Truck,
+  Leaf,
+  Check,
+} from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
@@ -13,6 +25,7 @@ export function MenuDetailPage({ id }: { id: string }) {
   const { add } = useCart();
   const [qty, setQty] = useState(1);
   const [fav, setFav] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(0);
 
   if (!dish) {
     return (
@@ -27,114 +40,161 @@ export function MenuDetailPage({ id }: { id: string }) {
     );
   }
 
-  const related = dishes.filter((d) => d.id !== dish.id).slice(0, 3);
+  const sizeOptions = dish.sizes ?? [];
+  const hasSizeOptions = sizeOptions.length > 0;
+  const chosenSize = sizeOptions[selectedSize];
+  const unitPrice = hasSizeOptions ? sizeOptions[selectedSize]?.price ?? dish.price : dish.price;
+  const related = dishes.filter((d) => d.id !== dish.id).slice(0, 4);
+
+  const addToCart = () => {
+    const cartDish = { ...dish, price: unitPrice };
+
+    for (let i = 0; i < qty; i++) add(cartDish, chosenSize?.name);
+    nav({ to: "/cart" });
+  };
 
   return (
     <Layout>
-      <section className="mx-auto max-w-7xl px-6 pt-8 md:px-8">
-        <Link
-          to="/menu"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ChevronLeft className="h-4 w-4" /> Back to menu
-        </Link>
-
-        <div className="mt-6 grid gap-10 md:grid-cols-2 md:gap-16">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative"
+      <section className="-mb-24 bg-[#0d0a08] px-5 pb-16 pt-7 text-white md:px-8 md:pt-10">
+        <div className="mx-auto max-w-7xl">
+          <Link
+            to="/menu"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#f5a623] transition hover:text-[#f52323]"
           >
-            <div className="relative aspect-square overflow-hidden rounded-[38%_62%_55%_45%/50%_45%_55%_50%] shadow-elegant">
-              <img src={dish.image} alt={dish.name} className="h-full w-full object-cover" />
-            </div>
-            <button
-              onClick={() => setFav((v) => !v)}
-              className="glass absolute right-4 top-4 grid h-12 w-12 place-items-center rounded-full shadow-float"
-              aria-label="Favorite"
+            <ChevronLeft className="h-4 w-4" /> Back to menu
+          </Link>
+
+          <div className="mt-5 grid gap-7 lg:grid-cols-[1fr_0.9fr] lg:gap-14">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="relative overflow-hidden rounded-[28px] border border-[#f52323]/25 bg-[#171210] shadow-elegant"
             >
-              <Heart
-                className={`h-5 w-5 ${fav ? "fill-destructive text-destructive" : "text-foreground"}`}
-              />
-            </button>
-          </motion.div>
-
-          <div className="flex flex-col justify-center">
-            <div className="flex flex-wrap gap-2">
-              {dish.tags.map((t) => (
-                <span key={t} className="rounded-full bg-secondary px-3 py-1 text-xs">
-                  {t}
-                </span>
-              ))}
-            </div>
-            <h1 className="mt-4 font-display text-5xl leading-tight md:text-6xl">{dish.name}</h1>
-            <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Star className="h-4 w-4 fill-gold text-gold" /> {dish.rating} ({dish.reviews})
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-4 w-4" /> {dish.prepTime}
-              </span>
-              <span className="flex items-center gap-1">
-                <Flame className="h-4 w-4" /> {dish.calories} cal
-              </span>
-            </div>
-            <p className="mt-6 text-lg text-muted-foreground">{dish.description}</p>
-
-            <div className="mt-8 rounded-3xl bg-card p-5 shadow-soft">
-              <h3 className="font-display text-lg">Choose your size</h3>
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                {["Regular", "Large", "Family"].map((s, i) => (
-                  <button
-                    key={s}
-                    className={`rounded-2xl border px-4 py-3 text-sm transition ${
-                      i === 0
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-background hover:bg-secondary"
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-8 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-1 rounded-full bg-card p-1.5 shadow-soft">
-                <button
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="grid h-10 w-10 place-items-center rounded-full hover:bg-secondary"
-                >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="w-8 text-center font-medium">{qty}</span>
-                <button
-                  onClick={() => setQty(qty + 1)}
-                  className="grid h-10 w-10 place-items-center rounded-full bg-primary text-primary-foreground"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
+              <div className="relative aspect-[4/3] md:aspect-square">
+                <img
+                  src={dish.image}
+                  alt={dish.name}
+                  loading="eager"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
               </div>
               <button
-                onClick={() => {
-                  for (let i = 0; i < qty; i++) add(dish);
-                  nav({ to: "/cart" });
-                }}
-                className="group flex flex-1 items-center justify-between rounded-full bg-primary px-6 py-4 text-primary-foreground shadow-float transition hover:scale-[1.01]"
+                onClick={() => setFav((v) => !v)}
+                className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full border border-[#f5a623]/50 bg-black/45 backdrop-blur transition hover:border-[#f52323]"
+                aria-label="Favorite"
               >
-                <span className="text-sm font-medium">Add to cart</span>
-                <span className="font-display text-lg">${(dish.price * qty).toFixed(2)}</span>
+                <Heart className={`h-5 w-5 ${fav ? "fill-[#f52323] text-[#f52323]" : "text-white"}`} />
               </button>
+              <div className="absolute bottom-4 left-4 right-4 grid grid-cols-3 rounded-2xl border border-white/10 bg-black/55 px-3 py-3 text-xs backdrop-blur sm:text-sm">
+                <span className="flex items-center justify-center gap-1.5">
+                  <Flame className="h-4 w-4 text-[#f5a623]" /> {dish.calories} cal
+                </span>
+                <span className="flex items-center justify-center gap-1.5 border-x border-white/15">
+                  <Clock className="h-4 w-4 text-[#f5a623]" /> {dish.prepTime}
+                </span>
+                <span className="flex items-center justify-center gap-1.5">
+                  <Star className="h-4 w-4 fill-[#f5a623] text-[#f5a623]" /> {dish.rating}
+                </span>
+              </div>
+            </motion.div>
+
+            <div className="flex flex-col justify-center">
+              <div className="flex flex-wrap gap-2">
+                {dish.tags.map((t) => (
+                  <span key={t} className="rounded-full bg-[#f52323] px-3 py-1 text-xs font-bold text-white">
+                    {t}
+                  </span>
+                ))}
+              </div>
+
+              <h1 className="mt-4 font-display text-4xl leading-tight text-white sm:text-5xl md:text-6xl">
+                {dish.name}
+              </h1>
+              <div className="mt-4 h-0.5 w-20 bg-[#f52323]" />
+              <p className="mt-5 text-base leading-8 text-white/65 md:text-lg">{dish.description}</p>
+
+              {hasSizeOptions ? (
+                <div className="mt-7">
+                  <h3 className="font-display text-lg text-white">Choose your size</h3>
+                  <div className="mt-3 grid grid-cols-[repeat(3,minmax(112px,1fr))] gap-2 overflow-x-auto pb-1 sm:gap-3">
+                    {sizeOptions.map((size, i) => (
+                      <button
+                        key={size.name}
+                        onClick={() => setSelectedSize(i)}
+                        className={`relative rounded-2xl border px-2 py-4 text-center transition sm:px-4 sm:py-5 ${
+                          selectedSize === i
+                            ? "border-[#f5a623] bg-[#2a1f13] shadow-[0_0_24px_rgba(245,166,35,0.18)]"
+                            : "border-white/12 bg-[#171210] hover:border-[#f52323]/60"
+                        }`}
+                      >
+                        <span className="block text-sm font-bold text-white sm:text-base">{size.name}</span>
+                        <span className="mt-1 block text-xs font-semibold text-[#f5a623] sm:text-sm">
+                          ${size.price.toFixed(2)}
+                        </span>
+                        {selectedSize === i ? (
+                          <span className="absolute right-2 top-2 grid h-5 w-5 place-items-center rounded-full bg-[#f5a623] text-black">
+                            <Check className="h-3 w-3" />
+                          </span>
+                        ) : null}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="flex w-full items-center justify-between rounded-full border border-white/12 bg-[#171210] p-1.5 sm:w-36">
+                  <button
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                    className="grid h-10 w-10 place-items-center rounded-full text-white transition hover:bg-white/10"
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="text-lg font-bold">{qty}</span>
+                  <button
+                    onClick={() => setQty(qty + 1)}
+                    className="grid h-10 w-10 place-items-center rounded-full bg-[#f52323] text-white"
+                    aria-label="Increase quantity"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+                <button
+                  onClick={addToCart}
+                  className="flex flex-1 items-center justify-between rounded-full bg-[#f52323] px-6 py-4 text-white shadow-[0_18px_40px_rgba(245,35,35,0.28)] transition hover:bg-[#d81717]"
+                >
+                  <span className="text-sm font-bold">Add to cart</span>
+                  <span className="font-display text-lg">${(unitPrice * qty).toFixed(2)}</span>
+                </button>
+              </div>
+
+              <div className="mt-7 grid grid-cols-3 gap-3 text-xs text-white/70">
+                <div className="rounded-2xl border border-white/10 bg-[#171210] p-3">
+                  <Leaf className="mb-2 h-5 w-5 text-[#f5a623]" />
+                  Freshly made
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-[#171210] p-3">
+                  <Truck className="mb-2 h-5 w-5 text-[#f52323]" />
+                  Fast delivery
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-[#171210] p-3">
+                  <ShieldCheck className="mb-2 h-5 w-5 text-[#f5a623]" />
+                  Secure checkout
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="mt-24">
-          <h2 className="font-display text-3xl">You might also love</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((d, i) => (
-              <DishCard key={d.id} dish={d} index={i} />
-            ))}
+          <div className="mt-12 md:mt-20">
+            <h2 className="font-display text-3xl text-white">You might also love</h2>
+            <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+              {related.map((d, i) => (
+                <DishCard key={d.id} dish={d} index={i} />
+              ))}
+            </div>
           </div>
         </div>
       </section>

@@ -17,6 +17,10 @@ export type Dish = {
   calories: number;
   prepTime: string;
   tags: string[];
+  sizes?: {
+    name: string;
+    price: number;
+  }[];
 };
 
 export const dishes: Dish[] = [
@@ -47,6 +51,11 @@ export const dishes: Dish[] = [
     calories: 880,
     prepTime: "14 min",
     tags: ["Bestseller"],
+    sizes: [
+      { name: "Regular", price: 24 },
+      { name: "Large", price: 28 },
+      { name: "Family", price: 42 },
+    ],
   },
   {
     id: "harvest-bowl",
@@ -74,6 +83,11 @@ export const dishes: Dish[] = [
     calories: 690,
     prepTime: "12 min",
     tags: ["Vegetarian"],
+    sizes: [
+      { name: "Regular", price: 21 },
+      { name: "Large", price: 26 },
+      { name: "Family", price: 38 },
+    ],
   },
   {
     id: "salmon",

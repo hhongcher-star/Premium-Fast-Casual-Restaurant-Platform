@@ -8,13 +8,11 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-4">
           <div>
             <h3 className="font-display text-3xl">
-  <span className="text-[#f52323]">Maison</span>{" "}
-  <span className="text-[#344c26]">Olive</span>
-</h3>
+              <span className="text-[#f52323]">Maison</span>{" "}
+              <span className="text-[#344c26]">Olive</span>
+            </h3>
 
-            <p className="mt-3 text-sm text-white/60">
-              A modern table for the everyday gourmand.
-            </p>
+            <p className="mt-3 text-sm text-white/60">A modern table for the everyday gourmand.</p>
 
             <div className="mt-6 flex gap-3">
               {[Instagram, Twitter, Facebook].map((I, i) => (
@@ -49,9 +47,7 @@ export default function Footer() {
           />
 
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-widest text-white/40">
-              Visit
-            </h4>
+            <h4 className="text-sm font-semibold uppercase tracking-widest text-white/40">Visit</h4>
 
             <p className="mt-4 text-sm leading-7 text-white/70">
               128 Olive Street
@@ -72,26 +68,15 @@ export default function Footer() {
   );
 }
 
-function FooterCol({
-  title,
-  links,
-}: {
-  title: string;
-  links: [string, string][];
-}) {
+function FooterCol({ title, links }: { title: string; links: [string, string][] }) {
   return (
     <div>
-      <h4 className="text-sm font-semibold uppercase tracking-widest text-white/40">
-        {title}
-      </h4>
+      <h4 className="text-sm font-semibold uppercase tracking-widest text-white/40">{title}</h4>
 
       <ul className="mt-4 space-y-3 text-sm text-white/75">
         {links.map(([label, to]) => (
           <li key={to}>
-            <Link
-              to={to}
-              className="transition hover:text-[#f5a623]"
-            >
+            <Link to={to} className="transition hover:text-[#f5a623]">
               {label}
             </Link>
           </li>

@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
 import type { Dish } from "./data";
 
-type CartItem = { dish: Dish; qty: number };
+type CartItem = { dish: Dish; qty: number; size?: string };
 const KEY = "maison-cart";
 const listeners = new Set<() => void>();
+
+function itemKey(dish: Dish, size?: string) {
+  return size ? `${dish.id}:${size}` : dish.id;
+}
+
+function keyFromParts(id: string, size?: string) {
+  return size ? `${id}:${size}` : id;
+}
 
 function read(): CartItem[] {
   if (typeof window === "undefined") return [];
@@ -31,17 +39,18 @@ export function useCart() {
 
   return {
     items,
-    add: (dish: Dish) => {
+    add: (dish: Dish, size?: string) => {
       const cur = read();
-      const found = cur.find((i) => i.dish.id === dish.id);
+      const found = cur.find((i) => itemKey(i.dish, i.size) === itemKey(dish, size));
       if (found) found.qty += 1;
-      else cur.push({ dish, qty: 1 });
+      else cur.push({ dish, qty: 1, size });
       write(cur);
     },
-    remove: (id: string) => write(read().filter((i) => i.dish.id !== id)),
-    setQty: (id: string, qty: number) => {
+    remove: (id: string, size?: string) =>
+      write(read().filter((i) => itemKey(i.dish, i.size) !== keyFromParts(id, size))),
+    setQty: (id: string, qty: number, size?: string) => {
       const cur = read()
-        .map((i) => (i.dish.id === id ? { ...i, qty } : i))
+        .map((i) => (itemKey(i.dish, i.size) === keyFromParts(id, size) ? { ...i, qty } : i))
         .filter((i) => i.qty > 0);
       write(cur);
     },
